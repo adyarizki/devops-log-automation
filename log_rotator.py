@@ -9,15 +9,15 @@ if os.path.exists(log_dir):
     waktu_sekarang = time.time()
     
     for nama_file in os.listdir(log_dir):
-        filepath = os.path.join(log_dir, nama_file)
-        
-        # Pastikan hanya memproses file (bukan folder)
-        if os.path.isfile(filepath):
-            waktu_modifikasi = os.path.getmtime(filepath)
-            umur_file = waktu_sekarang - waktu_modifikasi
+        # Tambahan pengecekan ekstensi .log
+        if nama_file.endswith('.log'):
+            filepath = os.path.join(log_dir, nama_file)
             
-            if umur_file > tujuh_hari:
-                print(f"File arsip: {nama_file}")
+            if os.path.isfile(filepath):
+                waktu_modifikasi = os.path.getmtime(filepath)
+                umur_file = waktu_sekarang - waktu_modifikasi
+                
+                if umur_file > tujuh_hari:
+                    print(f"File arsip: {nama_file}")
 else:
     print(f"Direktori {log_dir} tidak ditemukan.")
-
