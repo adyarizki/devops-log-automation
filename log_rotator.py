@@ -3,6 +3,7 @@ import os
 import time
 import datetime
 import tarfile
+import subprocess
 
 log_dir = '/var/log/app/'
 tujuh_hari = 7 * 24 * 60 * 60
@@ -34,8 +35,20 @@ if os.path.exists(log_dir):
             for file in log_yang_akan_diarsip:
                 tar.add(file, arcname=os.path.basename(file))
         print(f"Berhasil mengompresi file ke {nama_tar}")
-    else:
-        print("Tidak ada file log lama yang perlu diarsip.")
-
+        
+        # Langkah B: Hitung & Cetak Ukuran File Arsip
+        ukuran_bytes = os.path.getsize(path_tar)
+        ukuran_kb = ukuran_bytes / 1024
+        print(f"Ukuran file arsip: {ukuran_kb:.2f} KB")
+        
+        # Langkah C: Hapus File Log Lama yang Asli
+        for file_lama in log_yang_akan_diarsip:
+            os.remove(file_lama)
+        print("File log lama yang asli berhasil dihapus.")
+            
+        # Langkah D: Restart Service
+        # (Catatan: ubah 'app-transaction' ke service lain jika ingin testing di VM tanpa error)
+        subprocess.run(["systemctl", "restart", "app-transaction"], check=True)
+        print("Service app-transaction berhasil di-restart secara bersih.")
 else:
     print(f"Direktori {log_dir} tidak ditemukan.")
